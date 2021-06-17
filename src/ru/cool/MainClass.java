@@ -17,24 +17,9 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class MainClass {
 
-    // The window handle
-    private static long window;
-
     public static void main(String[] args) {
-        glfwInit();
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+        Window window = new Window(800, 640, 1);
+        window.createWindow();
 
-        window = glfwCreateWindow(800,600, "Test Window", NULL, NULL);
-
-        if(window == NULL){
-            System.err.println("Не удалось создать окно");
-            glfwTerminate();
-            return;
-        }
-        glfwMakeContextCurrent(window);
-        GLFWFramebufferSizeCallback fbsc = GLFWFramebufferSizeCallback.create(1);
-        glfwSetFramebufferSizeCallback(window, fbsc);
     }
 }
