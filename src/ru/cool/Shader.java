@@ -16,7 +16,7 @@ public class Shader {
     private String frgFile;
     private String vtxFile;
 
-    public Shader(String frgFile, String vtxFile) {
+    public Shader(String vtxFile, String frgFile) {
         this.frgFile = frgFile;
         this.vtxFile = vtxFile;
     }
@@ -46,19 +46,15 @@ public class Shader {
 
     }
 
-    private void enableShader(){
+    public final void enableShader(){
         glUseProgram(this.programId);
     }
 
-    private void disableShader(){
+    public final void disableShader(){
         glUseProgram(0);
     }
 
-
-
-
     /**
-     *
      * @param shaderFile - path to shader file;
      * @param type - vertex shader if type == true, fragment shader if type == false;
      * @return compiled shader

@@ -79,11 +79,16 @@ public class Window {
 
         MemoryUtil.memFree(buff);
 
+        Shader shader = new Shader("src/ru/cool/shaders/vertex.vtx", "src/ru/cool/shaders/fragment.frg");
+        shader.setShader();
+
         while(!this.closeWindow() && glfwGetKey(this.windowId, GLFW_KEY_ESCAPE) != GLFW_PRESS){
             glClearColor(0f,0f,0f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
 
+            shader.enableShader();
             glDrawArrays(GL_TRIANGLES,0, vertices.length / 3);
+            shader.disableShader();
 
             glfwPollEvents();
             glfwSwapBuffers(this.windowId);
