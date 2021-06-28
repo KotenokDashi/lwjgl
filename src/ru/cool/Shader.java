@@ -21,13 +21,52 @@ public class Shader {
         this.vtxFile = vtxFile;
     }
 
-    public void setShader(){
+    /**
+     * That method compiling and attaching shaders in one shader program.
+     * For use shader program, use enableShader(), disableShader().
+     */
+
+    public final void setShader(){
+        int vertexShader = this.compileShader(this.vtxFile, true);
+        int fragmentShader = this.compileShader(this.frgFile, false);
+        int shaderProgram = glCreateProgram();
+
+        glAttachShader(shaderProgram, vertexShader);
+        glAttachShader(shaderProgram, fragmentShader);
+        glLinkProgram(shaderProgram);
+
+        int programStatus = glGetProgrami(shaderProgram, GL_LINK_STATUS);
+        int logLength = glGetProgrami(shaderProgram, GL_INFO_LOG_LENGTH);
+        if(programStatus == 0){
+            String programLog = glGetProgramInfoLog(shaderProgram, logLength);
+            System.out.println("Error in shader program:" + "\n" + programLog);
+        }
+
+        this.programId = shaderProgram;
 
     }
 
-    private int compileShader(int shader, String shaderFile){
+    private void enableShader(){
+        glUseProgram(this.programId);
+    }
+
+    private void disableShader(){
+        glUseProgram(0);
+    }
+
+
+
+
+    /**
+     *
+     * @param shaderFile - path to shader file;
+     * @param type - vertex shader if type == true, fragment shader if type == false;
+     * @return compiled shader
+     */
+
+    private int compileShader(String shaderFile, boolean type){
         StringBuffer shaderSrc = new StringBuffer();
-        Path p = Paths.get("src/ru/cool/shaders/" + shaderFile);
+        Path p = Paths.get(shaderFile);
         try(FileChannel channel = (FileChannel) Files.newByteChannel(p)){
             ByteBuffer buff = ByteBuffer.allocate((int)channel.size());
             channel.read(buff);
@@ -40,14 +79,19 @@ public class Shader {
         }catch(IOException e){
             e.printStackTrace();
         }
-        shader = glCreateShader(GL_VERTEX_SHADER);
+        int shader = glCreateShader(GL_VERTEX_SHADER);
         glShaderSource(shader, shaderSrc);
         glCompileShader(shader);
         int status = glGetShaderi(shader, GL_COMPILE_STATUS);
+        int logLength = glGetShaderi(shader, GL_INFO_LOG_LENGTH);
         if(status == 0){
-
+            String shaderLog = glGetShaderInfoLog(shader, logLength);
+            System.out.println("Error in" + (type ? "vertex" : "fragment") + "shader: " + "\n" + shaderLog);
+            System.exit(-1);
         }
         return shader;
     }
+
+
 
 }
