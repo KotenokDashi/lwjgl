@@ -60,23 +60,55 @@ public class Window {
 
     private void update(){
 
+/*
         float[] vertices = {
                 -0.5f, -0.5f, 0.0f,
                 0.0f, 0.5f, 0.0f,
                 0.5f, -0.5f, 0.0f
         };
 
+
+        float[] rectangle = {
+                -0.5f, -0.5f, 0.0f,
+                -0.5f, 0.5f, 0.0f,
+                0.5f, 0.5f, 0.0f,
+
+                0.5f, 0.5f, 0.0f,
+                0.5f, -0.5f, 0.0f,
+                -0.5f, -0.5f, 0.0f
+        };
+*/
+
+        float[] rectangle = {
+                -0.5f, -0.5f, 0.0f,
+                -0.5f, 0.5f, 0.0f,
+                0.5f, 0.5f, 0.0f,
+                0.5f, -0.5f, 0.0f,
+        };
+
+        int[] indicies = {
+                0, 1, 2, 3, 0, 2
+        };
+
         Shader shader = new Shader("src/ru/cool/shaders/vertex.vtx", "src/ru/cool/shaders/fragment.frg");
         shader.setShader();
 
-        FloatBuffer buff = this.storeDataInFloatBuffer(vertices);
+        FloatBuffer verticesBuffer = this.storeDataInFloatBuffer(rectangle);
+        IntBuffer indicesBuffer = this.storeDataInIntBuffer(indicies);
+
+        int ebo = glGenBuffers();
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer, GL_STATIC_DRAW);
 
         int vao = glGenVertexArrays();
         glBindVertexArray(vao);
 
         int vbo = glGenBuffers();
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glBufferData(GL_ARRAY_BUFFER, buff, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, verticesBuffer, GL_STATIC_DRAW);
+
+        MemoryUtil.memFree(verticesBuffer);
+
         glVertexAttribPointer(0,3, GL_FLOAT, false, 3 * Float.BYTES, 0);
         glEnableVertexAttribArray(0);
 
@@ -85,10 +117,12 @@ public class Window {
             glClear(GL_COLOR_BUFFER_BIT);
 
             glBindVertexArray(vao);
+
             glEnableVertexAttribArray(0);
 
             shader.enableShader();
-            glDrawArrays(GL_TRIANGLES,0, vertices.length / 3);
+            //glDrawArrays(GL_TRIANGLES,0, rectangle.length / 3);
+            glDrawElements(GL_TRIANGLES, indicesBuffer);
             shader.disableShader();
 
             glDisableVertexAttribArray(0);
@@ -97,8 +131,7 @@ public class Window {
             glfwSwapBuffers(this.windowId);
         }
 
-        MemoryUtil.memFree(buff);
-
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
 
