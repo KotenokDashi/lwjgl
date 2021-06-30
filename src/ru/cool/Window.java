@@ -49,13 +49,13 @@ public class Window {
     private FloatBuffer storeDataInFloatBuffer(float[] data){
         FloatBuffer buffer = MemoryUtil.memAllocFloat(data.length);
         buffer.put(data);
-        return buffer;
+        return (FloatBuffer) buffer.flip();
     }
 
     private IntBuffer storeDataInIntBuffer(int[] data){
         IntBuffer buffer = MemoryUtil.memAllocInt(data.length);
         buffer.put(data);
-        return buffer;
+        return (IntBuffer) buffer.flip();
     }
 
     private void update(){
@@ -74,18 +74,14 @@ public class Window {
         int vao = glGenVertexArrays();
         glBindVertexArray(vao);
 
-
         int vbo = glGenBuffers();
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
         glBufferData(GL_ARRAY_BUFFER, buff, GL_STATIC_DRAW);
         glVertexAttribPointer(0,3, GL_FLOAT, false, 3 * Float.BYTES, 0);
         glEnableVertexAttribArray(0);
 
-        MemoryUtil.memFree(buff);
-
-
         while(!this.closeWindow() && glfwGetKey(this.windowId, GLFW_KEY_ESCAPE) != GLFW_PRESS){
-            glClearColor(0f,0f,0f, 1.0f);
+            glClearColor(0.0f,0.0f,0.0f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
 
             glBindVertexArray(vao);
@@ -101,8 +97,11 @@ public class Window {
             glfwSwapBuffers(this.windowId);
         }
 
+        MemoryUtil.memFree(buff);
+
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
+
         glfwDestroyWindow(this.windowId);
 
     }
