@@ -5,6 +5,7 @@ import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryUtil;
 
 
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
@@ -80,21 +81,22 @@ public class Window {
 */
 
         float[] rectangle = {
-                -0.5f, -0.5f, 0.0f,
-                -0.5f, 0.5f, 0.0f,
-                0.5f, 0.5f, 0.0f,
-                0.5f, -0.5f, 0.0f,
+                //вершины               цвет                текстура
+                -0.5f, -0.5f, 0.0f,     1.0f, 0.0f, 0.0f,   
+                -0.5f, 0.5f, 0.0f,      0.0f, 1.0f, 0.0f,
+                0.5f, 0.5f, 0.0f,       0.0f, 0.0f, 1.0f,
+                0.5f, -0.5f, 0.0f,      1.0f, 1.0f, 1.0f
         };
 
-        int[] indicies = {
-                0, 1, 2, 3, 0, 2
+        int[] indices = {
+                0, 2, 4, 0, 6, 4
         };
 
         Shader shader = new Shader("src/ru/cool/shaders/vertex.vtx", "src/ru/cool/shaders/fragment.frg");
         shader.setShader();
 
         FloatBuffer verticesBuffer = this.storeDataInFloatBuffer(rectangle);
-        IntBuffer indicesBuffer = this.storeDataInIntBuffer(indicies);
+        IntBuffer indicesBuffer = this.storeDataInIntBuffer(indices);
 
         int ebo = glGenBuffers();
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
@@ -112,24 +114,26 @@ public class Window {
         glVertexAttribPointer(0,3, GL_FLOAT, false, 3 * Float.BYTES, 0);
         glEnableVertexAttribArray(0);
 
+        glVertexAttribPointer(1, 3, GL_FLOAT, false, 3 * Float.BYTES, 3 * Float.BYTES);
+        glEnableVertexAttribArray(1);
+
         while(!this.closeWindow() && glfwGetKey(this.windowId, GLFW_KEY_ESCAPE) != GLFW_PRESS){
             glClearColor(0.0f,0.0f,0.0f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
 
             glBindVertexArray(vao);
 
-            glEnableVertexAttribArray(0);
-
             shader.enableShader();
-            //glDrawArrays(GL_TRIANGLES,0, rectangle.length / 3);
             glDrawElements(GL_TRIANGLES, indicesBuffer);
             shader.disableShader();
 
-            glDisableVertexAttribArray(0);
 
             glfwPollEvents();
             glfwSwapBuffers(this.windowId);
         }
+
+        glDisableVertexAttribArray(0);
+        glDisableVertexAttribArray(1);
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
