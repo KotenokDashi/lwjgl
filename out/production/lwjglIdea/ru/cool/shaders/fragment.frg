@@ -7,6 +7,6 @@ out vec4 outColor;
 uniform sampler2D tex_color;
 
 void main(){
-    outColor = texture(tex_color, tex_coord);
+    outColor = texture(tex_color, tex_coord) * vec4(frg_color, 1.0f);
 
 }
