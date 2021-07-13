@@ -5,15 +5,12 @@ import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryUtil;
 
-import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.Arrays;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL40C.*;
 import static org.lwjgl.system.MemoryUtil.*;
-import static org.lwjgl.stb.STBImage.*;
 
 public class Window {
 
@@ -21,6 +18,7 @@ public class Window {
     private final int HEIGHT;
     private long windowId;
     private GLFWVidMode vidMode;
+    Shader shader;
 
     public Window(int WIDTH, int HEIGHT, int windowId) {
         this.WIDTH = WIDTH;
@@ -69,9 +67,8 @@ public class Window {
         };
 
         //Объект шейдера
-        Shader shader = new Shader("src/ru/cool/shaders/vertex.vtx", "src/ru/cool/shaders/fragment.frg");
+        shader = new Shader("src/ru/cool/shaders/vertex.vtx", "src/ru/cool/shaders/fragment.frg");
         shader.setShader(); //Установка шейдерной программы
-
 
         FloatBuffer verticesBuffer = this.storeDataInFloatBuffer(rectangle);
         IntBuffer indicesBuffer = this.storeDataInIntBuffer(indices);
@@ -105,15 +102,21 @@ public class Window {
         glVertexAttribPointer(2, 2, GL_FLOAT, false, 8 * Float.BYTES, 6 * Float.BYTES);
         glEnableVertexAttribArray(2);
 
-        //Объект текстуры
-        Texture sz = new Texture("src/ru/cool/textures/logo.jpg");
-        sz.setTexture();    //Установка текстуры
+        //Объекты текстуры
+        Texture szLogo_tex = new Texture("src/ru/cool/textures/logo.jpg");
+        Texture cool_tex = new Texture("src/ru/cool/textures/cool.jpg");
+        shader.enableShader();  //Включение шейдерной программы для установки текстур и uniform-переменных
+        //Установка текстуры
+        szLogo_tex.setTexture(shader.getShaderProgram(), "texture0", 0);
+        cool_tex.setTexture(shader.getShaderProgram(), "texture1", 1);
 
         while(!this.closeWindow() && glfwGetKey(this.windowId, GLFW_KEY_ESCAPE) != GLFW_PRESS){
             glClearColor(0.0f,0.0f,0.0f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
 
-            sz.bindTexture();
+            szLogo_tex.bindTexture(GL_TEXTURE0);
+            cool_tex.bindTexture(GL_TEXTURE1);
+
             glBindVertexArray(vao);
 
             shader.enableShader();
@@ -124,7 +127,9 @@ public class Window {
             glfwSwapBuffers(this.windowId);
         }
 
-        sz.unbindTexture(); //Отвязка текстуры
+        //Отвязка текстуры
+        cool_tex.unbindTexture();
+        szLogo_tex.unbindTexture();
 
         //Отключение вершинных аттрибутов
         glDisableVertexAttribArray(0);
