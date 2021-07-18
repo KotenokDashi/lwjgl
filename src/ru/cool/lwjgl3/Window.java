@@ -1,15 +1,16 @@
-package ru.cool;
+package ru.cool.lwjgl3;
 
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
-import org.lwjgl.system.MemoryUtil;
+import ru.cool.lwjgl3.buffers.BufferManager;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL40C.*;
+//import static org.lwjgl.opengl.GL40C.*;
+import static org.lwjgl.opengl.GL40.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 public class Window {
@@ -18,7 +19,7 @@ public class Window {
     private final int HEIGHT;
     private long windowId;
     private GLFWVidMode vidMode;
-    Shader shader;
+    private Shader shader;
 
     public Window(int WIDTH, int HEIGHT, int windowId) {
         this.WIDTH = WIDTH;
@@ -29,9 +30,9 @@ public class Window {
     public void createWindow() {
         glfwInit();
 
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+//        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+//        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+//        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
         vidMode = glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor());
 
@@ -45,7 +46,6 @@ public class Window {
         }
 
         glfwMakeContextCurrent(this.windowId);
-
         GL.createCapabilities();
 
         this.update();
@@ -70,8 +70,8 @@ public class Window {
         shader = new Shader("src/ru/cool/shaders/vertex.vtx", "src/ru/cool/shaders/fragment.frg");
         shader.setShader(); //Установка шейдерной программы
 
-        FloatBuffer verticesBuffer = this.storeDataInFloatBuffer(rectangle);
-        IntBuffer indicesBuffer = this.storeDataInIntBuffer(indices);
+        FloatBuffer verticesBuffer = BufferManager.storeDataInFloatBuffer(rectangle);
+        IntBuffer indicesBuffer = BufferManager.storeDataInIntBuffer(indices);
 
         //Создание и присваивание буфера индексов
         int ebo = glGenBuffers();
@@ -88,7 +88,7 @@ public class Window {
         glBufferData(GL_ARRAY_BUFFER, verticesBuffer, GL_STATIC_DRAW);
 
         //Освобождение памяти вершинного буфера (есть ли смысл?)
-        MemoryUtil.memFree(verticesBuffer);
+        BufferManager.memoryFree(verticesBuffer);
 
         //Вершинный аттрибут под вершины фигуры
         glVertexAttribPointer(0,3, GL_FLOAT, false, 8 * Float.BYTES, 0);
@@ -105,8 +105,10 @@ public class Window {
         //Объекты текстуры
         Texture szLogo_tex = new Texture("src/ru/cool/textures/logo.jpg");
         Texture cool_tex = new Texture("src/ru/cool/textures/cool.jpg");
+
         shader.enableShader();  //Включение шейдерной программы для установки текстур и uniform-переменных
-        //Установка текстуры
+
+        //Установка текстур
         szLogo_tex.setTexture(shader.getShaderProgram(), "texture0", 0);
         cool_tex.setTexture(shader.getShaderProgram(), "texture1", 1);
 
@@ -150,26 +152,5 @@ public class Window {
         return glfwWindowShouldClose(this.windowId);
     }
 
-    /**
-     * Метод хранения вещественных числовых данных в буфере
-     * @param data массив данных которыми будет обёрнут массив
-     * @return новый перевёрнутый FloatBuffer из которого нужно будет освободить память.
-     */
-    private FloatBuffer storeDataInFloatBuffer(float[] data){
-        FloatBuffer buffer = MemoryUtil.memAllocFloat(data.length);
-        buffer.put(data);
-        return (FloatBuffer) buffer.flip();
-    }
-
-    /**
-     * Метод хранения целых числовых данных в буфере
-     * @param data массив данных которыми будет обёрнут массив
-     * @return новый перевёрнутый IntBuffer из которого нужно будет освободить память.
-     */
-    private IntBuffer storeDataInIntBuffer(int[] data){
-        IntBuffer buffer = MemoryUtil.memAllocInt(data.length);
-        buffer.put(data);
-        return (IntBuffer) buffer.flip();
-    }
 
 }

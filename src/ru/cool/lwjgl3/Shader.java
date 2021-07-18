@@ -1,4 +1,4 @@
-package ru.cool;
+package ru.cool.lwjgl3;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
