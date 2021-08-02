@@ -20,10 +20,10 @@ public class Texture {
     /**
      * Загружает и устанавливает текстуру
      * @param shaderProgram шейдерная программа
-     * @param uniformTexture название uniform переменной текстурного юнита
+     * @param uniformTextureName название uniform переменной текстурного юнита
      * @param textureUnitValue значение текстурного юнита
      */
-    public void setTexture(int shaderProgram, String uniformTexture, int textureUnitValue){
+    public void setTexture(int shaderProgram, String uniformTextureName, int textureUnitValue){
         this.texture = glGenTextures(); //Генерация текстуры
         glBindTexture(GL_TEXTURE_2D, this.texture); //Привязка текстуры как 2D типа
 
@@ -35,9 +35,9 @@ public class Texture {
 
         //Выделение буферов под размеры и каналы
         IntBuffer w, h, c;
-        w = MemoryUtil.memAllocInt(1);
-        h = MemoryUtil.memAllocInt(1);
-        c = MemoryUtil.memAllocInt(1);
+        w = MemoryUtil.memAllocInt(4);
+        h = MemoryUtil.memAllocInt(4);
+        c = MemoryUtil.memAllocInt(4);
 
         stbi_set_flip_vertically_on_load(true); //Переворот оси Y
 
@@ -55,7 +55,7 @@ public class Texture {
         MemoryUtil.memFree(h);
         MemoryUtil.memFree(c);
 
-        glUniform1i(glGetUniformLocation(shaderProgram, uniformTexture), textureUnitValue);
+        glUniform1i(glGetUniformLocation(shaderProgram, uniformTextureName), textureUnitValue);
 
     }
 
