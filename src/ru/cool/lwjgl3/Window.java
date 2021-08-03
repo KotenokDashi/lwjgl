@@ -3,17 +3,25 @@ package ru.cool.lwjgl3;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
+<<<<<<< HEAD:src/ru/cool/lwjgl3/Window.java
 import org.lwjgl.opengl.GL11;
 import ru.cool.lwjgl3.buffers.ElementBufferObject;
 import ru.cool.lwjgl3.buffers.VertexArrayObject;
 import ru.cool.lwjgl3.buffers.VertexBufferObject;
 import ru.cool.lwjgl3.types.EnumBufferDataType;
 import ru.cool.lwjgl3.util.DataManager;
+=======
+import ru.cool.lwjgl3.buffers.BufferManager;
+>>>>>>> c8e3d9afdc04ea8a129a6854184bfff367f992e4:src/ru/cool/Window.java
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 import static org.lwjgl.glfw.GLFW.*;
+<<<<<<< HEAD:src/ru/cool/lwjgl3/Window.java
+=======
+//import static org.lwjgl.opengl.GL40C.*;
+>>>>>>> c8e3d9afdc04ea8a129a6854184bfff367f992e4:src/ru/cool/Window.java
 import static org.lwjgl.opengl.GL40.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
@@ -36,9 +44,9 @@ public class Window {
     public void createWindow() {
         glfwInit();
 
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+//        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+//        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+//        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
         vidMode = glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor());
 
@@ -79,6 +87,12 @@ public class Window {
         shader = new Shader("src/ru/cool/lwjgl3/shaders/vertex.vtx", "src/ru/cool/lwjgl3/shaders/fragment.frg");
         shader.setShader(); //Установка шейдерной программы
 
+<<<<<<< HEAD:src/ru/cool/lwjgl3/Window.java
+=======
+        FloatBuffer verticesBuffer = BufferManager.storeDataInFloatBuffer(rectangle);
+        IntBuffer indicesBuffer = BufferManager.storeDataInIntBuffer(indices);
+
+>>>>>>> c8e3d9afdc04ea8a129a6854184bfff367f992e4:src/ru/cool/Window.java
         //Создание и присваивание буфера индексов
         ElementBufferObject ebo = new ElementBufferObject();
         ebo.putIndices(indicesBuffer);
@@ -86,6 +100,7 @@ public class Window {
         VertexArrayObject vao = new VertexArrayObject();
 
         //Создание вершинного объекта
+<<<<<<< HEAD:src/ru/cool/lwjgl3/Window.java
         VertexBufferObject vbo = new VertexBufferObject();
         vbo.putDataToBuffer(verticesBuffer);
         DataManager.memoryFree(verticesBuffer);
@@ -97,6 +112,30 @@ public class Window {
         //Объекты текстуры
         Texture szLogo_tex = new Texture("src/ru/cool/lwjgl3/textures/logo.jpg");
         Texture cool_tex = new Texture("src/ru/cool/lwjgl3/textures/cool.jpg");
+=======
+        int vbo = glGenBuffers();
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBufferData(GL_ARRAY_BUFFER, verticesBuffer, GL_STATIC_DRAW);
+
+        //Освобождение памяти вершинного буфера (есть ли смысл?)
+        BufferManager.memoryFree(verticesBuffer);
+
+        //Вершинный аттрибут под вершины фигуры
+        glVertexAttribPointer(0,3, GL_FLOAT, false, 8 * Float.BYTES, 0);
+        glEnableVertexAttribArray(0);
+
+        //Вершинный аттрибут под цвет фигуры
+        glVertexAttribPointer(1, 3, GL_FLOAT, false, 8 * Float.BYTES, 3 * Float.BYTES);
+        glEnableVertexAttribArray(1);
+
+        //Вершинный аттрибут под координаты текстуры
+        glVertexAttribPointer(2, 2, GL_FLOAT, false, 8 * Float.BYTES, 6 * Float.BYTES);
+        glEnableVertexAttribArray(2);
+
+        //Объекты текстуры
+        Texture szLogo_tex = new Texture("src/ru/cool/textures/logo.jpg");
+        Texture cool_tex = new Texture("src/ru/cool/textures/cool.jpg");
+>>>>>>> c8e3d9afdc04ea8a129a6854184bfff367f992e4:src/ru/cool/Window.java
 
         shader.enableShader();  //Включение шейдерной программы для установки текстур и uniform-переменных
 
