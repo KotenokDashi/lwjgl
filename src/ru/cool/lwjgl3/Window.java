@@ -9,11 +9,13 @@ import ru.cool.lwjgl3.buffers.VertexArrayObject;
 import ru.cool.lwjgl3.buffers.VertexBufferObject;
 import ru.cool.lwjgl3.types.EnumBufferDataType;
 import ru.cool.lwjgl3.util.DataManager;
+import ru.cool.lwjgl3.buffers.BufferManager;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 import static org.lwjgl.glfw.GLFW.*;
+//import static org.lwjgl.opengl.GL40C.*;
 import static org.lwjgl.opengl.GL40.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
@@ -36,9 +38,9 @@ public class Window {
     public void createWindow() {
         glfwInit();
 
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+//        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+//        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+//        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
         vidMode = glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor());
 
