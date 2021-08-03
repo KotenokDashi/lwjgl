@@ -3,13 +3,11 @@ package ru.cool.lwjgl3;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
-import org.lwjgl.opengl.GL11;
 import ru.cool.lwjgl3.buffers.ElementBufferObject;
 import ru.cool.lwjgl3.buffers.VertexArrayObject;
 import ru.cool.lwjgl3.buffers.VertexBufferObject;
 import ru.cool.lwjgl3.types.EnumBufferDataType;
 import ru.cool.lwjgl3.util.DataManager;
-import ru.cool.lwjgl3.buffers.BufferManager;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -18,8 +16,6 @@ import static org.lwjgl.glfw.GLFW.*;
 //import static org.lwjgl.opengl.GL40C.*;
 import static org.lwjgl.opengl.GL40.*;
 import static org.lwjgl.system.MemoryUtil.*;
-
-import static  ru.cool.lwjgl3.types.EnumBufferDataType.*;
 
 public class Window {
 
@@ -117,8 +113,7 @@ public class Window {
             ebo.drawElements(indicesBuffer);
             shader.disableShader();
 
-            glfwPollEvents();
-            glfwSwapBuffers(this.windowId);
+            this.updateFrame();
         }
 
         DataManager.memoryFree(indicesBuffer);
@@ -137,6 +132,11 @@ public class Window {
 
         glfwDestroyWindow(this.windowId);
         glfwTerminate();
+    }
+
+    public void updateFrame(){
+        glfwPollEvents();
+        glfwSwapBuffers(this.windowId);
     }
 
     private boolean closeWindow() {
