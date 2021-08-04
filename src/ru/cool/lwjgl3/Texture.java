@@ -17,20 +17,14 @@ public class Texture {
         this.texturePath = texturePath;
     }
 
-    /**
-     * Загружает и устанавливает текстуру
-     * @param shaderProgram шейдерная программа
-     * @param uniformTextureName название uniform переменной текстурного юнита
-     * @param textureUnitValue значение текстурного юнита
-     */
-    public void setTexture(int shaderProgram, String uniformTextureName, int textureUnitValue){
+    public void setTexture(){
         this.texture = glGenTextures(); //Генерация текстуры
         glBindTexture(GL_TEXTURE_2D, this.texture); //Привязка текстуры как 2D типа
 
         //Параметры текстуры
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);   //Повторение текстуры вышедшей за границу по оси X(S)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);   //Повторение текстуры вышедшей за границу по оси Y(T)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);   //Фильтрация при уменьшении размера учитывая мипмапу
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);   //Фильтрация при уменьшении размера учитывая мипмапу
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);  //Фильтрация текстуры при увеличении размера
 
         //Выделение буферов под размеры и каналы
@@ -55,16 +49,17 @@ public class Texture {
         MemoryUtil.memFree(h);
         MemoryUtil.memFree(c);
 
-        glUniform1i(glGetUniformLocation(shaderProgram, uniformTextureName), textureUnitValue);
-
     }
 
-    public void bindTexture(int textureUnit){
-        glActiveTexture(textureUnit);
+    public void bindTexture(){
         glBindTexture(GL_TEXTURE_2D, this.texture);
     }
 
     public void unbindTexture(){
         glBindTexture(GL_TEXTURE_2D, 0);
+    }
+
+    public String getTexturePath(){
+        return this.texturePath;
     }
 }

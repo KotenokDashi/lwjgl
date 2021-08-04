@@ -23,7 +23,6 @@ public class VertexBufferObject {
     }
 
     public VertexBufferObject setAttributePointer(int size, EnumBufferDataType dataType, int stride, int offset){
-        System.out.println("Set " + this.indicesAmount + " index for vertex attribute");
         glVertexAttribPointer(this.indicesAmount, size, dataType.getType(), false, stride, offset);
         glEnableVertexAttribArray(this.indicesAmount);
         this.indicesAmount++;
@@ -32,7 +31,6 @@ public class VertexBufferObject {
 
     public void disableAttributePointer(){
         for(int i = 0; i < this.indicesAmount; i++) {
-            System.out.println("Disable " + i + " attribute's index");
             glDisableVertexAttribArray(i);
         }
     }
